@@ -26,6 +26,15 @@ var connection = mysql.createConnection({
 
 app.get("/", (request, response) =>{
 
+	// connection.connect();
+
+	// connection.query('SELECT 1 + 1 AS solution', function (err, rows, fields) {
+	//   if (err) throw err
+
+	//   console.log('The solution is: ', rows[0].solution);
+	// })
+
+	// connection.end();
 	/*
 		insert database connection test here, first we need to create the tables
 	*/
@@ -33,8 +42,6 @@ app.get("/", (request, response) =>{
 	response.json({
 		example: "this is the example"
 	});
-
-
 
 });
 
