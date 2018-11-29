@@ -5,7 +5,7 @@ const router = express.Router();
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : 'password',
+  password : '',
   database : 'cfclone'
 });
 

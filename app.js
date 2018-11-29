@@ -6,7 +6,7 @@ var PORT = process.env.PORT || 3001;
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : 'password',
+  password : '',
   database : 'cfclone'
 });
 
