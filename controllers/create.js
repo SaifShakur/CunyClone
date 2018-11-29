@@ -1,31 +1,29 @@
 const express = require('express');
 var mysql = require("mysql");
 const router = express.Router();
+const keys = require("../config/keys")
+bodyParser = require('body-parser').json();
 
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'password',
-  database : 'cfclone'
+  host: keys.mysql.host,
+  user: keys.mysql.user,
+  password: keys.mysql.password,
+  database: keys.mysql.database
 });
 
+connection.connect(function (error) {
+  if (error) {
+    console.error('error connecting: ' + err.stack);
+    return;
+  }
+  console.log('connected as id ' + connection.threadId);
+});
+
+//-------------------------------------------------------------
+
+//temporaily required
 var course_ID = 50024;
 
-
-connection.connect(function(error) {
-
-	  if (error) {
-	    console.error('error connecting: ' + err.stack);
-	    return;
-	  }
-
-	  console.log('connected as id ' + connection.threadId);
-});
-
-
-
-
-// -----------------------------------
 router.get("/", (request, response) =>{
 
   console.log("We live");
@@ -35,8 +33,6 @@ router.get("/", (request, response) =>{
   });
 
 });
-
-
 
 //------------[Department creation]---------------
 router.get("/create_department", (request, response) => {
