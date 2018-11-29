@@ -1,4 +1,4 @@
-//rename this file to keys.js
+//create another file to keys.js
 //but in the correct values for your database
 //delete these comments!
 
