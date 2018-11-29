@@ -22,9 +22,7 @@ connection.connect(function(error) {
 
 
 // -----------------------------------
-router.delete("/", (request, response) => {
-
-  //DELETE FROM employee WHERE emp_id = 102;
+router.get("/", (request, response) => {
 
   console.log("We deleting stuff now!");
 
@@ -34,122 +32,121 @@ router.delete("/", (request, response) => {
 
 });
 
-
-
+//------------[Department Deletions]---------------
 router.get("/delete_department", (request, response) =>{
+
+  //get the department's abbreviation
+  //deleteall( from courses, where the departments abbree match)
+  //get the course_ID
+  //deleteall( from sections where the courses_ID match)
+  //
 
   connection.query("DELETE FROM departments WHERE dept_name = \"Business\";");
 
+  //deleteall
 
   connection.query("SELECT * FROM departments;", function (error, results, fields){
-    
+
     console.log("We just deleted the Business department");
 
     response.send(results);
   });
-
-  // connection.query("DELETE * FROM departments WHERE dept_name = " + request.body.dept_name + ";", function (error,
-  //   results, fields){
-
-  //       console.log("We just deleted the Business department");
-
-  //       connection.query("SELECT * FROM departments;", function (error, results, fields){
-  //         response.send(results);
-  //       });
-  // })
+  
 });
 
 
+//------------[Courses Deletions]---------------
+router.get("/delete_course", (request, response) => {
 
-router.get("/courses", (request, response) =>{
+  connection.query("DELETE FROM courses WHERE title = \"Intro to Business Talk\";");
 
   connection.query("SELECT * FROM courses;", function (error, results, fields){
 
-    console.log("We got courses data");
+    console.log("We just deleted a Business courses");
+
     response.send(results);
   });
+
 });
 
 
+//----------------[Instructor Deleton]-----------------
+router.get("/delete_instructor", (request, response) =>{
 
-router.get("/instructors", (request, response) =>{
+  connection.query("DELETE FROM instructors WHERE instructor_ID = 1121;");
 
   connection.query("SELECT * FROM instructors;", function (error, results, fields){
 
-    console.log("We got instructors data");
+    console.log("We just deleted an instructor");
+
     response.send(results);
   });
-
+  
 });
 
-router.get("/days", (request, response) =>{
+//----------------[Section Deleton]-----------------
+router.get("/delete_section", (request, response) =>{
 
-  connection.query("SELECT * FROM days;", function (error, results, fields){
-
-    console.log("We got days data");
-    response.send(results);
-  });
-
-});
-
-router.get("/time_slots", (request, response) =>{
-
-  connection.query("SELECT * FROM time_slots;", function (error, results, fields){
-
-    console.log("We got time_slots data");
-    response.send(results);
-  });
-
-});
-
-
-router.get("/rooms", (request, response) =>{
-
-  connection.query("SELECT * FROM rooms;", function (error, results, fields){
-
-    console.log("We got rooms data");
-    response.send(results);
-  });
-
-});
-
-
-router.get("/sections", (request, response) =>{
+  connection.query("DELETE FROM sections WHERE section_ID = 10000026;");
 
   connection.query("SELECT * FROM sections;", function (error, results, fields){
 
-    console.log("We got sections data");
+    console.log("We just deleted the second section of Introduction to Computer Science");
+
     response.send(results);
   });
- 
+  
 });
 
 
-router.get("/students", (request, response) =>{
+
+//----------------[Student Deleton]-----------------
+router.get("/delete_student", (request, response) =>{
+
+  connection.query("DELETE FROM students WHERE student_id = 20202014;");
 
   connection.query("SELECT * FROM students;", function (error, results, fields){
 
-    console.log("We got students data");
+    console.log("We just deleted Raman the G.O.A.T");
+
     response.send(results);
   });
-
+  
 });
 
 
-router.get("/enrollment", (request, response) =>{
 
-  connection.query("SELECT * FROM enrollment;", function (error, results, fields){
-
-    console.log("We got enrollment data");
-    response.send(results);
-  });
-
-});
-
+//connection.query("INSERT INTO students VALUES(\"Raman\", \"Kannan\", 18, 0, NULL);");
 
 
 /*
 
+CREATE TABLE students(
+  student_id INT PRIMARY KEY,
+  first_name VARCHAR(20),
+  last_name VARCHAR(20),
+credits_allowed INT(2),
+total_credits INT(3),
+status VARCHAR(2) -- derived
+);
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
