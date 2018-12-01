@@ -21,144 +21,139 @@ connection.connect(function (error) {
 
 //-------------------------------------------------------------
 
-//temporaily required
-var course_ID = 50024;
-
-router.get("/", (request, response) =>{
+router.get("/", (request, response) => {
 
   console.log("We live");
 
   response.json({
-    Creat: "We gunna cook up some secret sauce"
+    Create: "We gunna cook up some secret sauce"
   });
 
 });
 
 //------------[Department creation]---------------
-router.get("/create_department", (request, response) => {
+router.post("/department", bodyParser, (request, response) => {
+  //INSERT INTO departments 
+  //VALUES("dept_name", "office", "abbreviation");
+  // {
+  //   "dept_name": "BUSINESS",
+  //   "office": "1010",
+  //   "abbreviation": "BUSI"
+  // }
+  connection.query(`INSERT INTO departments 
+                    VALUES ("${request.body.dept_name}",
+                    "${request.body.office}",
+                    "${request.body.abbreviation}");`,
 
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO departments VALUES (\"Business\", \"1006\", \"BUSI\");");
-
-  // connection.query("INSERT INTO departments VALUES (\"" + request.body.dept_name + "\", \"" + request.body.office
-  //   + "\", \"" + request.body.abbreviation + "\");");
-
-  connection.query("SELECT * FROM departments;", function (error, results, fields){
-    console.log("We added a business department!");
-    response.send(results);
-  });
-
+    (error, results, fields) => {
+      console.log("We added a department!");
+      response.json(results);
+    });
 });
-
-
 
 //------------[Courses creation]---------------
-router.get("/create_course", (request, response) => {
-
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO courses VALUES(50025, 101, \"Intro to Business Talk\", \"BUSI\", 3);");
-
-  // connection.query("INSERT INTO courses VALUES(" + (course_ID + 1) + ", " + request.body.course_num + 
-  //   ", \"" + request.body.title + "\", \"" + request.body.dept + "\"," + request.body.credits + ");");
-
-  // course_ID += 1;
-
-
-  connection.query("SELECT * FROM courses;", function (error, results, fields){
-    console.log("We added a business course!");
-    response.send(results);
-  });
-
+router.post("/course", bodyParser, (request, response) => {
+  //INSERT INTO departments 
+  //VALUES(${course_ID}, course_num, "title", dept, credits)
+  //dept should already exist
+  // {
+  //   "course_num": 101, 
+  //   "title": "intro to something", 
+  //   "dept": "MATH", 
+  //   "credits": 4
+  // }
+  connection.query(`INSERT INTO courses 
+                    VALUES(null,
+                           ${request.body.course_num}, 
+                           "${request.body.title}",
+                           "${request.body.dept}",
+                           ${request.body.credits});`,
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We added a course!");
+      response.json(results);
+    });
 });
-
-
 
 //------------[Instructor creation]---------------
-router.get("/create_instructor", (request, response) => {
+router.post("/instructor", bodyParser, (request, response) => {
 
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO instructors VALUES(00001121, \"Bobby\", \"SQL\", \"Computer Science\");");
-
-  connection.query("SELECT * FROM instructors;", function (error, results, fields){
-    console.log("We added a new instructor!");
-    response.send(results);
-  });
-
+  //INSERT INTO instructors 
+  // {
+  //   "first_name": "Rocky", 
+  //   "last_name": "Baby", 
+  //   "dept": "HIST"  -->the dept must exist 
+  // }
+  connection.query(`INSERT INTO instructors 
+                    VALUES(null, 
+                           "${request.body.first_name}",
+                           "${request.body.last_name}",
+                           "${request.body.dept}");`,
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We added a new instructor!");
+      response.send(results);
+    });
 });
-
-
-
 
 //--------------[Section creation]-----------------
-router.get("/create_section", (request, response) => {
+router.post("/section", bodyParser, (request, response) => {
 
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO sections VALUES(10000026, 50000, \"02\", 2019, \"SP\", \"0620\", \
-    7, 00001119, NULL, NULL);");
-
-  //INSERT INTO sections VALUES(10000026, 50000, "02", 2019, "SP", "0620", 7, 00001119, NULL, NULL);
-
-  connection.query("SELECT * FROM sections;", function (error, results, fields){
-    console.log("We added a new section for Introduction to Computer Science!");
-    response.send(results);
-  });
-
+  //INSERT INTO sections
+  //course_ID, room_num, time_slot, instructor_ID must exist
+  //{
+  // 	"course_ID": 50024, 
+  // 	"section_num": "03", 
+  // 	"year": 2020,
+  // 	"semester": "FA",
+  // 	"room_num": "0200",
+  // 	"time_slot": 4, 
+  // 	"instructor_ID": 1122
+  // } 
+  connection.query(`INSERT INTO sections 
+                    VALUES(null, 
+                           ${request.body.course_ID}, 
+                          "${request.body.section_num}", 
+                           ${request.body.year},
+                          "${request.body.semester}",
+                          "${request.body.room_num}",
+                           ${request.body.time_slot},
+                           ${request.body.instructor_ID});`,
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We added a new section");
+      response.json(results);
+    });
 });
-
 
 //--------------[Student creation]-----------------
-router.get("/create_student", (request, response) => {
-
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO students VALUES(20202014, \"Raman\", \"Kannan\", 18, 0, NULL);");
-
-  connection.query("SELECT * FROM students;", function (error, results, fields){
-    console.log("We added a new student named Raman Kannan!");
-    response.send(results);
-  });
-
+router.post("/student", bodyParser, (request, response) => {
+  // example:
+  // {
+  //   "first_name": "Ramen",
+  //   "last_name": "Noodles",
+  //   "credits_allowed": 17,
+  //   "credits": 55
+  // }
+  connection.query(`INSERT INTO students 
+                    VALUES(null, 
+                          "${request.body.first_name}",
+                          "${request.body.last_name}",
+                           ${request.body.credits_allowed},
+                           ${request.body.credits});`,
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We added a new student");
+      response.json(results);
+    });
 });
-
-/*
-CREATE TABLE students(
-  student_id INT PRIMARY KEY,
-  first_name VARCHAR(20),
-  last_name VARCHAR(20),
-credits_allowed INT(2),
-total_credits INT(3),
-status VARCHAR(2) -- derived
-);
-
-INSERT INTO students VALUES(20202010, "Saif", "Shakur", 18, 0, NULL);
-INSERT INTO students VALUES(20202011, "Mohamed", "Raffik", 18, 90, NULL);
-INSERT INTO students VALUES(20202012, "Matthew", "Li", 18, 60, NULL);
-INSERT INTO students VALUES(20202013, "Kah", "Yap", 18, 30, NULL);
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-*/
 
 module.exports = router;
