@@ -32,120 +32,97 @@ router.get("/", (request, response) => {
 });
 
 //------------[Department Deletions]---------------
-router.get("/delete_department", (request, response) =>{
-
+router.delete("/department", bodyParser, (request, response) => {
+  //Needs a better query
   //get the department's abbreviation
   //deleteall( from courses, where the departments abbree match)
   //get the course_ID
   //deleteall( from sections where the courses_ID match)
   //
 
-  connection.query("DELETE FROM departments WHERE dept_name = \"Business\";");
-
-  //deleteall
-
-  connection.query("SELECT * FROM departments;", function (error, results, fields){
-
-    console.log("We just deleted the Business department");
-
-    response.send(results);
-  });
-  
+  connection.query("DELETE FROM departments WHERE dept_name = \"Business\";",
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We just deleted a department");
+      response.json(results);
+    });
 });
-
 
 //------------[Courses Deletions]---------------
-router.get("/delete_course", (request, response) => {
+router.delete("/course", bodyParser, (request, response) => {
+  // {
+  //   "title": "intro to something",
+  //   "course_ID": null
+  // }
+  // {
+  //   "title": "",
+  //   "course_ID": 50026
+  // }
+  connection.query(`DELETE FROM courses 
+                    WHERE title = "${request.body.title}"
+                    OR course_ID = ${request.body.course_ID};`,
 
-  connection.query("DELETE FROM courses WHERE title = \"Intro to Business Talk\";");
-
-  connection.query("SELECT * FROM courses;", function (error, results, fields){
-
-    console.log("We just deleted a Business courses");
-
-    response.send(results);
-  });
-
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We just deleted a course");
+      response.json(results);
+    });
 });
 
-
 //----------------[Instructor Deleton]-----------------
-router.get("/delete_instructor", (request, response) =>{
+router.delete("/instructor", bodyParser, (request, response) => {
+  // {
+  //   "instructor_ID": 1121
+  // }
+  connection.query(`DELETE FROM instructors 
+                    WHERE instructor_ID = ${request.body.instructor_ID};`,
 
-  connection.query("DELETE FROM instructors WHERE instructor_ID = 1121;");
-
-  connection.query("SELECT * FROM instructors;", function (error, results, fields){
-
-    console.log("We just deleted an instructor");
-
-    response.send(results);
-  });
-  
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We just deleted an instructor");
+      response.json(results);
+    });
 });
 
 //----------------[Section Deleton]-----------------
-router.get("/delete_section", (request, response) =>{
+router.delete("/section", bodyParser, (request, response) => {
+  // {
+  //   "section_ID": 10000028
+  // }
+  connection.query(`DELETE FROM sections 
+                    WHERE section_ID = ${request.body.section_ID};`,
 
-  connection.query("DELETE FROM sections WHERE section_ID = 10000026;");
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We just deleted a section");
+      response.json(results);
+    });
 
-  connection.query("SELECT * FROM sections;", function (error, results, fields){
-
-    console.log("We just deleted the second section of Introduction to Computer Science");
-
-    response.send(results);
-  });
-  
 });
-
-
 
 //----------------[Student Deleton]-----------------
-router.get("/delete_student", (request, response) =>{
+router.delete("/student", bodyParser, (request, response) => {
+  // {
+  //   "sid": 20202015
+  // }
+  connection.query(`DELETE FROM students 
+                    WHERE student_id = ${request.body.sid};`,
 
-  connection.query("DELETE FROM students WHERE student_id = 20202014;");
-
-  connection.query("SELECT * FROM students;", function (error, results, fields){
-
-    console.log("We just deleted Raman the G.O.A.T");
-
-    response.send(results);
-  });
-  
+    (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log("We just deleted a student");
+      response.json(results);
+    });
 });
-
-
-
-//connection.query("INSERT INTO students VALUES(\"Raman\", \"Kannan\", 18, 0, NULL);");
-
-
-/*
-
-CREATE TABLE students(
-  student_id INT PRIMARY KEY,
-  first_name VARCHAR(20),
-  last_name VARCHAR(20),
-credits_allowed INT(2),
-total_credits INT(3),
-status VARCHAR(2) -- derived
-);
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = router;
