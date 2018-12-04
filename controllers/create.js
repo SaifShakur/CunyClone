@@ -21,8 +21,6 @@ connection.connect(function (error) {
 
 //-------------------------------------------------------------
 
-//temporaily required
-var course_ID = 50024;
 
 router.get("/", (request, response) =>{
 
@@ -55,8 +53,8 @@ router.get("/create_department", (request, response) => {
 //------------[Courses creation]---------------
 router.get("/create_course", (request, response) => {
 
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO courses VALUES(50025, 101, \"Intro to Business Talk\", \"BUSI\", 3);");
+  connection.query("INSERT INTO courses VALUES(NULL, 101, \"TALKING BUSINESS\", \"BUSI\", 3);");
+  connection.query("INSERT INTO courses VALUES(NULL, 101, \"HOW TO DO CAPITALISM\", \"BUSI\", 3);");
 
   // connection.query("INSERT INTO courses VALUES(" + (course_ID + 1) + ", " + request.body.course_num + 
   //   ", \"" + request.body.title + "\", \"" + request.body.dept + "\"," + request.body.credits + ");");
@@ -65,7 +63,8 @@ router.get("/create_course", (request, response) => {
 
 
   connection.query("SELECT * FROM courses;", function (error, results, fields){
-    console.log("We added a business course!");
+    console.log("We added a business course: Intro to Business Talk!");
+    console.log(results);
     response.send(results);
   });
 
@@ -76,8 +75,7 @@ router.get("/create_course", (request, response) => {
 //------------[Instructor creation]---------------
 router.get("/create_instructor", (request, response) => {
 
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO instructors VALUES(00001121, \"Bobby\", \"SQL\", \"Computer Science\");");
+  connection.query("INSERT INTO instructors VALUES(NULL, \"Bobby\", \"Moneyman\", \"BUSI\");");
 
   connection.query("SELECT * FROM instructors;", function (error, results, fields){
     console.log("We added a new instructor!");
@@ -92,14 +90,22 @@ router.get("/create_instructor", (request, response) => {
 //--------------[Section creation]-----------------
 router.get("/create_section", (request, response) => {
 
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO sections VALUES(10000026, 50000, \"02\", 2019, \"SP\", \"0620\", \
-    7, 00001119, NULL, NULL);");
+  connection.query("INSERT INTO sections VALUES(NULL, 50029, \"01\", 2019, \"SP\", \"0620\", \
+    7, 00001123);");
+    connection.query("INSERT INTO sections VALUES(NULL, 50029, \"02\", 2019, \"SP\", \"0620\", \
+    7, 00001123);");
+      connection.query("INSERT INTO sections VALUES(NULL, 50030, \"01\", 2019, \"SP\", \"0620\", \
+    7, 00001123);");
 
-  //INSERT INTO sections VALUES(10000026, 50000, "02", 2019, "SP", "0620", 7, 00001119, NULL, NULL);
+/*
+INSERT INTO enrollment VALUES(20202011, 10000033);
+INSERT INTO enrollment VALUES(20202011, 10000034);
+INSERT INTO enrollment VALUES(20202011, 10000035);
+
+*/
 
   connection.query("SELECT * FROM sections;", function (error, results, fields){
-    console.log("We added a new section for Introduction to Computer Science!");
+    console.log("We added a new section for Intro to Business Talk!");
     response.send(results);
   });
 
@@ -109,8 +115,7 @@ router.get("/create_section", (request, response) => {
 //--------------[Student creation]-----------------
 router.get("/create_student", (request, response) => {
 
-  //INSERT INTO departments VALUES("Computer Science", "1001", "CSCI");
-  connection.query("INSERT INTO students VALUES(20202014, \"Raman\", \"Kannan\", 18, 0, NULL);");
+  connection.query("INSERT INTO students VALUES(NULL, \"Raman\", \"Kannan\", 18, 0, NULL);");
 
   connection.query("SELECT * FROM students;", function (error, results, fields){
     console.log("We added a new student named Raman Kannan!");
