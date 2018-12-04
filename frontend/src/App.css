@@ -1,19 +1,17 @@
-.title {
-  font-size: 64px;
-  margin: 25px 0px 50px;
+.center {
   text-align: center;
-  display: inline-block;
-  background-color: blue;
-  padding: 25px 10%;
+}
+
+.input {
+  margin: 10px;
+  padding: 5px;
 }
 
 .display {
-  text-align: center;
   margin: 0px;
-}
-
-.row {
-  margin: auto;
+  display: inline-flex;
+  flex-wrap: wrap;
+  width: 90%;
 }
 
 .options {
@@ -25,15 +23,16 @@
 .button {
   margin: 5px;
   flex-grow: 1;
+  padding: 7px;
 }
 
 .module {
-  display: inline-block;
-  border-radius: 10%;
+  border-radius: 5%;
   border: 1px;
   border-color: black;
   border-style: solid;
   width: 45%;
   align-content: center;
   margin: 10px;
+  padding: 10px;
 }
