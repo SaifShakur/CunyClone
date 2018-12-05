@@ -32,34 +32,6 @@ router.get("/", (request, response) => {
 });
 
 
-router.get("/delete_department_test", (request, response) =>{
-
-  //get the department's abbreviation
-  //deleteall( from courses, where the departments abbree match)
-  //get the course_ID
-  //deleteall( from sections where the courses_ID match)
-  //
-
-  //connection.query("DELETE FROM departments WHERE dept_name = \"Business\";");
-
-
-
-  /*
-    `SELECT * FROM events, (SELECT * FROM groups_to_users WHERE group_id = '${request.body.group_id}')
-    A WHERE events.user_email = A.user_email;`,
-  */
-  //deleteall
-
-  connection.query("SELECT * FROM departments;", function (error, results, fields){
-
-    console.log("We just deleted the Business department");
-
-    response.send(results);
-  });
-  
-});
-
-
 /*
   Bottom-Up Deletion
 
@@ -74,56 +46,45 @@ router.get("/delete_department_test", (request, response) =>{
 router.get("/delete_department", (request, response) =>{
 
 
-  connection.query("DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
-    (SELECT * FROM courses WHERE dept = 'BUSI') del_courses WHERE sections.course_ID = del_courses.course_ID) \
-    del_sections WHERE enrollment.section_id = del_sections.section_ID;", function (error, results){
+  connection.query(`DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
+    (SELECT * FROM courses WHERE dept = ${request.body.abbreviation}) del_courses 
+    WHERE sections.course_ID = del_courses.course_ID) del_sections \
+    WHERE enrollment.section_id = del_sections.section_ID;`, function (error, results){
 
     console.log("DELETEING enrollements QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-    //response.send(results);
   });
 
 
-  connection.query("DELETE sections.* FROM sections, (SELECT * FROM courses WHERE dept = 'BUSI') del_courses\
-   WHERE sections.course_ID = del_courses.course_ID;", function (error, results){
+  connection.query(`DELETE sections.* FROM sections, (SELECT * FROM courses WHERE dept = ${request.body.abbreviation})\
+   del_courses WHERE sections.course_ID = del_courses.course_ID;`, function (error, results){
 
     console.log(" DELETEING sections QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-    //response.send(results);
   });
 
-  connection.query("DELETE FROM courses WHERE dept = 'BUSI';", function (error, results){
+  connection.query(`DELETE FROM courses WHERE dept = ${request.body.abbreviation};`, function (error, results){
     console.log("DELETEING courses QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-
-    //response.send(results);
   });
 
-  connection.query("DELETE FROM instructors WHERE dept = 'BUSI';", function (error, results){
+  connection.query(`DELETE FROM instructors WHERE dept = ${request.body.abbreviation};`, function (error, results){
     console.log("\n");
     console.log("DELETEING instructors QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-
-    //response.send(results);
   });
 
-  connection.query("DELETE FROM departments WHERE abbreviation = 'BUSI';", function (error, results){
+  connection.query(`DELETE FROM departments WHERE abbreviation = ${request.body.abbreviation};`, function (error, results){
     console.log("DELETEING department QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-
-    //response.send(results);
   });
 
+  //to confirm we deleted a department (refer to console if anything)
   connection.query("SELECT * FROM departments;", function (error, results, fields){
 
     console.log("We just deleted a department");
@@ -133,42 +94,40 @@ router.get("/delete_department", (request, response) =>{
 });
 
 
+
+
+
+
+
 //------------[Courses Deletions]---------------
 router.get("/delete_course", (request, response) => {
 
   //var title = "Intro to Business Talk";
 
-    connection.query("DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
-    (SELECT * FROM courses WHERE title = 'Intro to Business Talk') del_courses WHERE \
-    sections.course_ID = del_courses.course_ID) del_sections WHERE enrollment.section_id = del_sections.section_ID;", 
+    connection.query(`DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
+    (SELECT * FROM courses WHERE course_ID = ${request.body.course_ID}) del_courses WHERE \
+    sections.course_ID = del_courses.course_ID) del_sections WHERE enrollment.section_id = del_sections.section_ID;`, 
     function (error, results){
 
     console.log("DELETEING enrollements QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-    //response.send(results);
   });
 
 
-  connection.query("DELETE sections.* FROM sections, (SELECT * FROM courses WHERE title = 'Intro to Business Talk')\
-   del_courses WHERE sections.course_ID = del_courses.course_ID;", function (error, results){
+  connection.query(`DELETE sections.* FROM sections, (SELECT * FROM courses WHERE course_ID = ${request.body.course_ID}')\
+   del_courses WHERE sections.course_ID = del_courses.course_ID;`, function (error, results){
 
     console.log(" DELETEING sections QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-    //response.send(results);
   });
 
-  connection.query("DELETE FROM courses WHERE title = 'Intro to Business Talk';", function (error, results){
+  connection.query(`DELETE FROM courses WHERE course_ID = ${request.body.course_ID};`, function (error, results){
 
     console.log("DELETEING courses QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-
-    //response.send(results);
   });
 
   connection.query("SELECT * FROM courses;", function (error, results, fields){
@@ -183,10 +142,12 @@ router.get("/delete_course", (request, response) => {
 
 
 
+
+
 //----------------[Instructor Deleton]-----------------
 router.get("/delete_instructor", (request, response) =>{
 
-  connection.query("DELETE FROM instructors WHERE instructor_ID = 1121;");
+  connection.query(`DELETE FROM instructors WHERE instructor_ID = ${request.body.instructor_ID};`);
 
   connection.query("SELECT * FROM instructors;", function (error, results, fields){
 
@@ -204,23 +165,21 @@ router.get("/delete_instructor", (request, response) =>{
 //----------------[Section Deleton]-----------------
 router.get("/delete_section", (request, response) =>{
 
-  connection.query("DELETE enrollment.* FROM enrollment, (SELECT * FROM sections WHERE section_ID = 10000026) \
-    del_sections WHERE enrollment.section_id = del_sections.section_ID;", function (error, results){
+  connection.query(`DELETE enrollment.* FROM enrollment, \
+    (SELECT * FROM sections WHERE section_ID = ${request.body.section_ID}) \
+    del_sections WHERE enrollment.section_id = del_sections.section_ID;`, function (error, results){
 
     console.log("DELETEING enrollements QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-    //response.send(results);
   });
 
 
-  connection.query("DELETE FROM sections WHERE section_ID = 10000026;", function (error, results){
+  connection.query(`DELETE FROM sections WHERE section_ID = ${request.body.section_ID};`, function (error, results){
 
     console.log(" DELETEING sections QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.send(results);
   });
 
   
@@ -234,26 +193,26 @@ router.get("/delete_section", (request, response) =>{
 
 
 
+
+
+
 //----------------[Student Deleton]-----------------
 router.get("/delete_student", (request, response) =>{
 
 
-  connection.query("DELETE enrollment.* FROM enrollment, (SELECT * FROM students WHERE student_id = 20202014) \
-    del_students WHERE enrollment.student_id = del_students.student_id;", function (error, results){
+  connection.query(`DELETE enrollment.* FROM enrollment, (SELECT * FROM students WHERE student_id = ${request.body.sid}) \
+    del_students WHERE enrollment.student_id = del_students.student_id;`, function (error, results){
 
     console.log("DELETEING enrollements QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.json(results);
-    //response.send(results);
   });
 
-  connection.query("DELETE FROM students WHERE student_id = 20202014;", function (error, results){
+  connection.query(`DELETE FROM students WHERE student_id = ${request.body.sid};`, function (error, results){
 
     console.log(" DELETEING students QUERY: ")
     console.log("\n");
     console.log(results);
-    //response.send(results);
   });
 
   connection.query("SELECT * FROM students;", function (error, results, fields){
