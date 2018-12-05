@@ -17,7 +17,8 @@ class Module extends Component {
       delete: false,
       update: false,
       visibility: "hidden",
-      table_vis: "hidden"
+      table_vis: "hidden",
+      table_data: {}
     };
     this.Toggle_View = this.Toggle_View.bind(this);
     this.Get_Data = this.Get_Data.bind(this);
@@ -29,26 +30,29 @@ class Module extends Component {
       update: (type === "update") ? !this.state.update : false,
     }, () => {
       this.setState({
-        visibility: (this.state.add) ? "visible" : "hidden",
+        visibility: (this.state.add || this.state.delete || this.state.update) ? "visible" : "hidden",
         table_vis: (this.state.delete || this.state.update) ? "visible" : "hidden"
       });
     });
   }
   Get_Data() {
-    fetch('http://localhost:3001/read/'+this.title.toLowerCase()+'s', {
+    fetch('http://localhost:3001/read/' + this.title.toLowerCase() + 's', {
       method: "GET",
-      mode: "no-cors",
+      mode: "cors", ////
+      headers: { "Content-Type": "application/json" },
     }).then(res => res.json())
-    .then(res => console.log(res))
-    .catch(error => console.error('Error'));
+    .then(res => this.setState({table_data: res}, () => { 
+      console.log(this.state.table_data);
+    }))
+    .catch(error => console.error(error));
   }
   render() {
     let children = [];
     for (let i = 0; i < this.inputs[this.title].length; i++) {
       children.push(<input className="input" type="text" placeholder={this.inputs[this.title][i]} name={this.inputs[this.title][i]} />);
     }
-    children.push(<br/>);
-    children.push(<button className="button" onClick={() => this.Get_Data()}>{(this.state.add) ? "Add "+this.title : "Search "+this.title}</button>);
+    children.push(<br />);
+    children.push(<button className="button" onClick={() => this.Get_Data()}>{(this.state.add) ? "Add " + this.title : "Search " + this.title}</button>);
 
     return (
       <div className="module" id={this.title}>
@@ -58,10 +62,10 @@ class Module extends Component {
           <button className="button" onClick={() => this.Toggle_View("update")}>Update</button>
           <button className="button" onClick={() => this.Toggle_View("delete")}>Delete</button>
         </div>
-        <div style={{visibility: this.state.visibility}}>
+        <div style={{ visibility: this.state.visibility }}>
           {children}
         </div>
-        <div style={{visibility: this.state.table_vis}}>
+        <div style={{ visibility: this.state.table_vis }}>
           <table>
 
           </table>
@@ -75,7 +79,7 @@ class App extends Component {
   render() {
     return (
       <div className="center">
-        <div style={{display: "inline-block", fontSize: "32px"}}><h1 className="title" >CunyClone</h1></div>
+        <div style={{ display: "inline-block", fontSize: "32px" }}><h1 className="title" >CunyClone</h1></div>
         <br></br>
         <div className="display">
           <Module title="Student"></Module>
@@ -95,4 +99,4 @@ class App extends Component {
   }
 }
 
- export default App;
+export default App;
