@@ -21,7 +21,8 @@ connection.connect(function (error) {
 
 //-------------------------------------------------------------
 
-router.get("/", (request, response) => {
+
+router.get("/", (request, response) =>{
 
   console.log("We live");
 
