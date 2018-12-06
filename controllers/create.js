@@ -90,12 +90,12 @@ router.get("/create_instructor", (request, response) => {
 //--------------[Section creation]-----------------
 router.get("/create_section", (request, response) => {
 
-  connection.query("INSERT INTO sections VALUES(NULL, 50029, \"01\", 2019, \"SP\", \"0620\", \
-    7, 00001123);");
-    connection.query("INSERT INTO sections VALUES(NULL, 50029, \"02\", 2019, \"SP\", \"0620\", \
-    7, 00001123);");
-      connection.query("INSERT INTO sections VALUES(NULL, 50030, \"01\", 2019, \"SP\", \"0620\", \
-    7, 00001123);");
+  connection.query("INSERT INTO sections VALUES(NULL, 50031, \"01\", 2019, \"SP\", \"0620\", \
+    7, 00001124, 30);");
+    connection.query("INSERT INTO sections VALUES(NULL, 50031, \"02\", 2019, \"SP\", \"0620\", \
+    7, 00001124, 30);");
+      connection.query("INSERT INTO sections VALUES(NULL, 50032, \"01\", 2019, \"SP\", \"0620\", \
+    7, 00001124, 2);");
 
 /*
 INSERT INTO enrollment VALUES(20202011, 10000033);
@@ -124,23 +124,59 @@ router.get("/create_student", (request, response) => {
 
 });
 
+
+
+
+
 /*
-CREATE TABLE students(
-  student_id INT PRIMARY KEY,
-  first_name VARCHAR(20),
-  last_name VARCHAR(20),
-credits_allowed INT(2),
-total_credits INT(3),
-status VARCHAR(2) -- derived
-);
 
-INSERT INTO students VALUES(20202010, "Saif", "Shakur", 18, 0, NULL);
-INSERT INTO students VALUES(20202011, "Mohamed", "Raffik", 18, 90, NULL);
-INSERT INTO students VALUES(20202012, "Matthew", "Li", 18, 60, NULL);
-INSERT INTO students VALUES(20202013, "Kah", "Yap", 18, 30, NULL);
-
+1)    search through the sections table for that section
+1.a)  if the capacity for tha tsections is >= 1, return okay
+1.b)  else, reponse.send(400) 
+2)    insert the student.id into the enrollment table and then UPDATE that section capacity by 1
 
 */
+//--------------[Adding a student in enrollment creation]-----------------
+router.get("/create_enrollment", (request, response) => {
+
+  //request.body.student_id
+  //request.body.section_id
+
+  connection.query(`SELECT capacity FROM sections WHERE section_ID = ${request.body.section_id}`, 
+    function (error, results, fields){
+
+      var cap = results[0].capacity;
+
+      if(cap < 1){
+        console.log("THERE'S NO ROOM FOR THIS SECTION -DAB-");
+        response.send(400);
+      }
+      else{
+
+        connection.query(`INSERT INTO enrollment VALUES(${request.body.student_id}, ${request.body.section_id});`);
+
+        //subtracting one from the capacity
+        connection.query(`UPDATE sections SET capacity = capacity - 1 WHERE section_ID = ${request.body.section_id};`);
+
+        console.log(`SELECT capacity FROM sections WHERE section_ID = ${request.body.section_id}`);
+      }
+
+
+  });
+
+
+
+
+  connection.query("SELECT * FROM enrollment;", function (error, results, fields){
+    console.log("We added a new student to a new section!");
+    response.send(results);
+  });
+
+});
+
+
+
+
 
 
 
