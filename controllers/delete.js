@@ -46,7 +46,7 @@ router.get("/", (request, response) => {
 router.get("/delete_department", (request, response) =>{
 
   connection.query(`DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
-    (SELECT * FROM courses WHERE dept = ${request.body.abbreviation}) del_courses 
+    (SELECT * FROM courses WHERE dept = "${request.body.abbreviation}") del_courses 
     WHERE sections.course_ID = del_courses.course_ID) del_sections \
     WHERE enrollment.section_id = del_sections.section_ID;`, function (error, results){
 
@@ -55,7 +55,7 @@ router.get("/delete_department", (request, response) =>{
     console.log(results);
   });
 
-  connection.query(`DELETE sections.* FROM sections, (SELECT * FROM courses WHERE dept = ${request.body.abbreviation})\
+  connection.query(`DELETE sections.* FROM sections, (SELECT * FROM courses WHERE dept = "${request.body.abbreviation}")\
    del_courses WHERE sections.course_ID = del_courses.course_ID;`, function (error, results){
 
     console.log(" DELETEING sections QUERY: ")
@@ -63,20 +63,20 @@ router.get("/delete_department", (request, response) =>{
     console.log(results);
   });
 
-  connection.query(`DELETE FROM courses WHERE dept = ${request.body.abbreviation};`, function (error, results){
+  connection.query(`DELETE FROM courses WHERE dept = "${request.body.abbreviation}";`, function (error, results){
     console.log("DELETEING courses QUERY: ")
     console.log("\n");
     console.log(results);
   });
 
-  connection.query(`DELETE FROM instructors WHERE dept = ${request.body.abbreviation};`, function (error, results){
+  connection.query(`DELETE FROM instructors WHERE dept = "${request.body.abbreviation}";`, function (error, results){
     console.log("\n");
     console.log("DELETEING instructors QUERY: ")
     console.log("\n");
     console.log(results);
   });
 
-  connection.query(`DELETE FROM departments WHERE abbreviation = ${request.body.abbreviation};`, function (error, results){
+  connection.query(`DELETE FROM departments WHERE abbreviation = "${request.body.abbreviation}";`, function (error, results){
     console.log("DELETEING department QUERY: ")
     console.log("\n");
     console.log(results);
