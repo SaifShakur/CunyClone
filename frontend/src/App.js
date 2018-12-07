@@ -12,13 +12,16 @@ class Module extends Component {
       "Section": ["Course ID", "Section Number", "Year", "Semester", "Room Number", "Time Slot", "Instructor ID", "Date Start", "Date End"],
       "Department": ["Department Name", "Office", "Abbreviation"]
     };
+    this.columns = [];
+    for (let i in this.inputs[this.title]) { this.columns.push(<td>{this.inputs[this.title][i]}</td>); }
+    this.columns.push(<td>Option</td>);
     this.state = {
       add: false,
       delete: false,
       update: false,
       visibility: "hidden",
       table_vis: "hidden",
-      table_data: {}
+      table_struct: <table className="table"></table>
     };
     this.Toggle_View = this.Toggle_View.bind(this);
     this.Get_Data = this.Get_Data.bind(this);
@@ -31,44 +34,65 @@ class Module extends Component {
     }, () => {
       this.setState({
         visibility: (this.state.add || this.state.delete || this.state.update) ? "visible" : "hidden",
-        table_vis: (this.state.delete || this.state.update) ? "visible" : "hidden"
-      });
+        table_vis: (this.state.delete || this.state.update) ? "visible" : "hidden",
+        table_struct: <table className="table"></table>
+      }, () => this.Get_Data());
     });
   }
   Get_Data() {
-    fetch('http://localhost:3001/read/' + this.title.toLowerCase() + 's', {
-      method: "GET",
-      mode: "cors", ////
-      headers: { "Content-Type": "application/json" },
-    }).then(res => res.json())
-    .then(res => this.setState({table_data: res}, () => { 
-      console.log(this.state.table_data);
-    }))
-    .catch(error => console.error(error));
+    if (this.state.delete || this.state.update) {
+      fetch('http://localhost:3001/read/' + this.title.toLowerCase() + 's', {
+        method: "GET",
+        mode: "cors", 
+        headers: { "Content-Type": "application/json" },
+      }).then(res => { return res.json(); })
+      .then(data => {
+        this.setState({table_data: data}, () => {
+          let row_col_vals = [];
+          for (let i in this.state.table_data) { 
+            let data_col = [];
+            for (let j in this.state.table_data[i]) { data_col.push(<td>{this.state.table_data[i][j]}</td>); }
+            data_col.push(<td><button>{(this.state.update) ? "Update Data" : "Delete Data"}</button></td>);
+            row_col_vals.push(<tr>{data_col}</tr>);
+          }
+          let table = [
+            (<table className="table">
+              <thead>
+                <tr>{this.columns}</tr>
+              </thead>
+              <tbody>{row_col_vals}</tbody>
+            </table>)];
+          this.setState({table_struct: table});
+        });
+      })
+      .catch(error => console.error(error));
+    }
+    else {}
   }
   render() {
     let children = [];
-    for (let i = 0; i < this.inputs[this.title].length; i++) {
-      children.push(<input className="input" type="text" placeholder={this.inputs[this.title][i]} name={this.inputs[this.title][i]} />);
+    if (this.state.add) {
+      for (let i = 0; i < this.inputs[this.title].length; i++) {
+        children.push(<input className="input" type="text" placeholder={this.inputs[this.title][i]} name={this.inputs[this.title][i]} />);
+        if (i % 2 === 0 && i !== 0) { children.push(<br />); }
+      }
+      children.push(<br />);
+      children.push(<button className="button">{"Add " + this.title}</button>);  
     }
-    children.push(<br />);
-    children.push(<button className="button" onClick={() => this.Get_Data()}>{(this.state.add) ? "Add " + this.title : "Search " + this.title}</button>);
 
     return (
       <div className="module" id={this.title}>
         <h1>{this.title}</h1>
         <div className="options">
-          <button className="button" onClick={() => this.Toggle_View("add")}>Add</button>
-          <button className="button" onClick={() => this.Toggle_View("update")}>Update</button>
-          <button className="button" onClick={() => this.Toggle_View("delete")}>Delete</button>
+          <button className="button" style={{"font-weight": (this.state.add) ? "Bold" : "normal"}} onClick={() => this.Toggle_View("add")}>Add</button>
+          <button className="button" style={{"font-weight": (this.state.update) ? "Bold" : "normal"}} onClick={() => this.Toggle_View("update")}>Update</button>
+          <button className="button" style={{"font-weight": (this.state.delete) ? "Bold" : "normal"}} onClick={() => this.Toggle_View("delete")}>Delete</button>
         </div>
         <div style={{ visibility: this.state.visibility }}>
           {children}
         </div>
         <div style={{ visibility: this.state.table_vis }}>
-          <table>
-
-          </table>
+          {this.state.table_struct}
         </div>
       </div>
     );
@@ -87,12 +111,6 @@ class App extends Component {
           <Module title="Course"></Module>
           <Module title="Section"></Module>
           <Module title="Department"></Module>
-          <div className="module">
-            <h1>Database</h1>
-            <div>
-              <button className="button">View Database</button>
-            </div>
-          </div>
         </div>
       </div>
     );
