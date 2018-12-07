@@ -131,8 +131,113 @@ router.get("/enrollment", (request, response) =>{
 
 
 
+
+
+
+
+
+
 /*
+1) get all the times in time_slots where the time_start are >= request.body.time_start
+1.1) get all the times in time_slots where the time_end are <= request.body.time_end
+
+2)get all the sections where the sections.time_slots are in 1's subset
 
 */
+router.get("/sections_within_time", (request, response) => {
+
+  /*
+    request.body.time_start
+    request.body.time_end
+  */
+  
+  connection.query("SELECT sections_subset.*, courses.title FROM courses,\
+  (SELECT sections.*, time_slots_subset.time_start, time_slots_subset.time_end FROM sections,\
+  (SELECT * FROM time_slots WHERE time_start >= '9:45' AND time_end <= '11:00') time_slots_subset\
+  WHERE sections.time_slot = time_slots_subset.time_slot_id) sections_subset\
+  WHERE courses.course_ID = sections_subset.course_ID;", 
+  function(error, results){
+
+      console.log(results);
+      response.send(results);
+  });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+1) get all the times in time_slots where the time_start are >= request.body.time_start
+1.1) get all the times in time_slots where the time_end are <= request.body.time_end
+
+2)get all the sections where the sections.time_slots are in 1's subset
+
+
+router.get("/sections_within_time", (request, response) => {
+
+  /*
+    request.body.time_start
+    request.body.time_end
+  
+
+      connection.query("SELECT time_slot_id FROM time_slots WHERE time_start >= '9:45' AND time_end <= '11:00'",
+    function(error, results){
+
+      console.log(results);
+    });
+
+
+  connection.query("SELECT sections.*, time_slots_subset.time_start, time_slots_subset.time_end FROM sections,\
+    (SELECT * FROM time_slots WHERE time_start >= '9:45' AND time_end <= '11:00') time_slots_subset\
+    WHERE sections.time_slot = time_slots_subset.time_slot_id;",
+
+    function(error, results){
+
+      var temp = results;
+
+       connection.query("SELECT courses.* FROM courses, (SELECT sections.* FROM sections,\
+        (SELECT time_slot_id FROM time_slots WHERE time_start >= '9:45' AND time_end <= '11:00') time_slots_subset\
+        WHERE sections.time_slot = time_slots_subset.time_slot_id) sections_subset\
+        WHERE courses.course_ID = sections_subset.course_ID;", 
+        function(error, results){
+
+           
+            //adding the title of each course to each section of the course
+            results.map((course) => {
+              temp.map((section) => {
+                  if(course.course_ID == section.course_ID)
+                    section.title = course.title;
+              });
+            });
+
+            response.send(temp);
+        });
+
+      console.log(results);
+      response.send(results);
+
+    });
+
+});
+*/
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
