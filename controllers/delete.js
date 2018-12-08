@@ -102,7 +102,6 @@ router.get("/delete_department", (request, response) =>{
 //------------[Courses Deletions]---------------
 router.get("/delete_course", (request, response) => {
 
-  //var title = "Intro to Business Talk";
 
     connection.query(`DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
     (SELECT * FROM courses WHERE course_ID = ${request.body.course_ID}) del_courses WHERE \
@@ -247,14 +246,18 @@ router.get("/delete_student", (request, response) =>{
 /*
 1)Update all the secions the student was apart of
 2)Remove that specific enrollment
+
+${request.body.student_ID}
+${request.body.section_ID}
 */
 router.get("/delete_enrollment", (request, response) => {
 
 
-    connection.query(`UPDATE sections, (SELECT FROM enrollment \
-      WHERE enrollment.student_id = 20202010 AND enrollment.section_ID = 10000001) student_enrollment\
-      SET sections.capacity = sections.capacity + 1 WHERE \
-      sections.section_ID = student_enrollment.section_id;`, function (error, results){
+    connection.query(`UPDATE sections, 
+      (SELECT FROM enrollment WHERE enrollment.student_id = ${request.body.student_ID} AND 
+      enrollment.section_ID = ${request.body.section_ID}) student_enrollment
+      SET sections.capacity = sections.capacity + 1 
+      WHERE sections.section_ID = student_enrollment.section_id;`, function (error, results){
 
     console.log("Updating sections QUERY: ")
     console.log("\n");
@@ -262,8 +265,8 @@ router.get("/delete_enrollment", (request, response) => {
   });
 
 
-  connection.query(`DELETE FROM enrollment\
-    WHERE enrollment.student_id = 20202010 AND enrollment.section_ID = 10000001;`, 
+  connection.query(`DELETE FROM enrollment
+    WHERE enrollment.student_id = ${request.body.student_ID} AND enrollment.section_ID = ${request.body.section_ID};`, 
     function (error, results){
 
     console.log("DELETEING enrollements QUERY: ")

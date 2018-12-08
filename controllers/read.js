@@ -138,25 +138,23 @@ router.get("/enrollment", (request, response) =>{
 
 2)get all the sections where the sections.time_slots are in 1's subset
 
+${request.body.start_time}
+${request.body.end_time}
+
+
 */
 router.get("/sections_within_time", (request, response) => {
 
-  /*
-    request.body.time_start
-    request.body.time_end
-  */
-
-  connection.query("SELECT sections_subset.*, courses.title FROM courses,\
-  (SELECT sections.*, time_slots_subset.time_start, time_slots_subset.time_end FROM sections,\
-  (SELECT * FROM time_slots WHERE time_start >= '9:45' AND time_end <= '11:00') time_slots_subset\
-  WHERE sections.time_slot = time_slots_subset.time_slot_id) sections_subset\
-  WHERE courses.course_ID = sections_subset.course_ID;", 
+  connection.query(`SELECT sections_subset.*, courses.title FROM courses,
+  (SELECT sections.*, time_slots_subset.time_start, time_slots_subset.time_end FROM sections,
+  (SELECT * FROM time_slots WHERE time_start >= '${request.body.start_time}' AND time_end <= '${request.body.end_time}') 
+  time_slots_subset WHERE sections.time_slot = time_slots_subset.time_slot_id) sections_subset
+  WHERE courses.course_ID = sections_subset.course_ID;`, 
   function(error, results){
 
       console.log(results);
       response.send(results);
   });
-
 });
 
 
@@ -168,23 +166,20 @@ we want all the sections available for a specific department
 2) select all the courses that match that departmnet
 3)select all the sections that matches those courses
 
+${request.body.dept_abbreviation}
 */
+
+
 router.get("/sections_within_department", (request, response) => {
 
-  /*
-    section.section_ID | course.course_ID |courses.abbreviation + courses.course_num | section.section_num | 
-    rooms.rom_num | course.title | time_slots.start && time_slots.end && days | instructors.first + instructors.last
-  */
-
-
-  connection.query(`
+  connection.query(` 
 
     SELECT sections_with_days.*, instructors.first_name, instructors.last_name FROM instructors,
 
     (SELECT sections_plus_time.*, days.day_set FROM days,
     (SELECT sections_we_want.*, time_slots.time_start, time_slots.time_end, time_slots.day_id FROM time_slots,
     (SELECT sections.*, courses_we_want.title, courses_we_want.course_num, courses_we_want.dept FROM sections,
-    (SELECT * FROM courses WHERE courses.dept = 'CSCI') courses_we_want
+    (SELECT * FROM courses WHERE courses.dept = '${request.body.dept_abbreviation}') courses_we_want
     WHERE sections.course_ID = courses_we_want.course_ID) sections_we_want
     WHERE time_slots.time_slot_id = sections_we_want.time_slot) sections_plus_time
     WHERE sections_plus_time.day_ID = days.day_ID) sections_with_days
@@ -194,6 +189,11 @@ router.get("/sections_within_department", (request, response) => {
       console.log(results);
       response.send(results);
   });
+});
+
+
+
+
 /*
   connection.query(`SELECT sections.*, courses_we_want.title, courses_we_want.course_num, courses_we_want.dept
     FROM sections,
@@ -204,16 +204,6 @@ router.get("/sections_within_department", (request, response) => {
       response.send(results);
   });
 */
-});
-
-
-
-
-
-
-
-
-
 
 
 
