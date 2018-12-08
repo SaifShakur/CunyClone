@@ -132,18 +132,19 @@ router.put("/title", bodyParser, (request, response) => {
 
 
 //updates course title. the body requires: title and course_ID
-router.get("/update_section_instructor", bodyParser, (request, response) => {
+/*
+${request.body.instructor_ID}
+${request.body.section_ID}
 
-  //|   10000003 |     50002 | 01          | 2019 | SP       | 0220     |         3 |          1111 |       30 |
-  //ORIGINAL row for secitons ^^^^^^
+*/
+router.put("/update_section_instructor", (request, response) => {
 
-  connection.query(`UPDATE sections SET instructor_ID = 1111 WHERE sections.section_ID = 10000003;`, 
-      (error, results, fields) => {
+  connection.query(`UPDATE sections SET instructor_ID = ${request.body.instructor_ID} 
+    WHERE sections.section_ID = ${request.body.section_ID};`, (error, results, fields) => {
         console.log("updated course credits");
         response.send(results);
       }
   );
-
 });
 
 

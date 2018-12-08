@@ -143,7 +143,7 @@ ${request.body.end_time}
 
 
 */
-router.get("/sections_within_time", (request, response) => {
+router.post("/sections_within_time", (request, response) => {
 
   connection.query(`SELECT sections_subset.*, courses.title FROM courses,
   (SELECT sections.*, time_slots_subset.time_start, time_slots_subset.time_end FROM sections,
@@ -170,7 +170,7 @@ ${request.body.dept_abbreviation}
 */
 
 
-router.get("/sections_within_department", (request, response) => {
+router.post("/sections_within_department", (request, response) => {
 
   connection.query(` 
 

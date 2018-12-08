@@ -40,10 +40,13 @@ router.get("/", (request, response) => {
   3) remove from instructors where dept abbree
   4) remove from courses where dept abbree match
   5) remove department
+
+
+  ${request.body.abbreviation}
 */
 
 //------------[Department Deletions]---------------
-router.get("/delete_department", (request, response) =>{
+router.post("/delete_department", (request, response) =>{
 
 
   connection.query(`DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
@@ -252,7 +255,7 @@ ${request.body.section_ID}
 */
 router.get("/delete_enrollment", (request, response) => {
 
-
+    //updating the section capacity
     connection.query(`UPDATE sections, 
       (SELECT FROM enrollment WHERE enrollment.student_id = ${request.body.student_ID} AND 
       enrollment.section_ID = ${request.body.section_ID}) student_enrollment
@@ -264,7 +267,7 @@ router.get("/delete_enrollment", (request, response) => {
     console.log(results);
   });
 
-
+  //deleting the row from the enrollment table
   connection.query(`DELETE FROM enrollment
     WHERE enrollment.student_id = ${request.body.student_ID} AND enrollment.section_ID = ${request.body.section_ID};`, 
     function (error, results){

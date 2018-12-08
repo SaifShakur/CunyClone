@@ -179,38 +179,49 @@ router.post("/student", bodyParser, (request, response) => {
 2)    insert the student.id into the enrollment table and then UPDATE that section capacity by 1
 
 
-  //request.body.student_id
-  //request.body.section_id
+  //request.body.student_ID
+  //request.body.section_ID
 
 */
 
 //--------------[Adding a student in enrollment creation]-----------------
-router.post("/create_enrollment", (request, response) => {
+router.post("/add_enrollment", (request, response) => {
 
-  connection.query(`SELECT capacity FROM sections WHERE section_ID = ${request.body.section_id}`, 
+  var sending_back = true;
+  
+  connection.query(`SELECT capacity FROM sections WHERE section_ID = ${request.body.section_ID}`, 
     function (error, results, fields){
 
       var cap = results[0].capacity;
 
       if(cap < 1){
         console.log("THERE'S NO ROOM FOR THIS SECTION");
-        response.send(400);
+        sending_back = false;
       }
       else{
 
-        connection.query(`INSERT INTO enrollment VALUES(${request.body.student_id}, ${request.body.section_id});`);
+        console.log("WE HERE");
+        console.log(`${request.body.student_ID}` + " and we have " + `${request.body.section_ID}`);
+
+        connection.query(`INSERT INTO enrollment VALUES(${request.body.student_ID}, ${request.body.section_ID});`);
 
         //subtracting one from the capacity
-        connection.query(`UPDATE sections SET capacity = capacity - 1 WHERE section_ID = ${request.body.section_id};`);
+        connection.query(`UPDATE sections SET capacity = capacity - 1 WHERE section_ID = ${request.body.section_ID};`);
 
-        console.log(`SELECT capacity FROM sections WHERE section_ID = ${request.body.section_id}`);
+        console.log(`SELECT capacity FROM sections WHERE section_ID = ${request.body.section_ID}`);
       }
 
   });
 
   connection.query("SELECT * FROM enrollment;", function (error, results, fields){
     console.log("We added a new student to a new section!");
-    response.send(results);
+
+    var send_back = results;
+
+    if(sending_back === false)
+      send_back = 400;
+
+    response.send(send_back);
   });
 
 });
@@ -244,9 +255,7 @@ router.post("/create_enrollment", (request, response) => {
 // connection.query(`INSERT INTO enrollment VALUES(20202010,10000023);`);
 // connection.query(`INSERT INTO enrollment VALUES(20202011,10000023);`);
 
-//   connection.query("INSERT INTO students VALUES(NULL, \"Raman\", \"Kannan\", 18, 0, NULL);");
-
-
+// connection.query("INSERT INTO students VALUES(NULL, \"Raman\", \"Kannan\", 18, 0, NULL);");
 
 
 module.exports = router;
