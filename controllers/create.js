@@ -126,8 +126,6 @@ router.get("/create_student", (request, response) => {
 
 
 
-
-
 /*
 
 1)    search through the sections table for that section
@@ -163,9 +161,6 @@ router.get("/create_enrollment", (request, response) => {
 
 
   });
-
-
-
 
   connection.query("SELECT * FROM enrollment;", function (error, results, fields){
     console.log("We added a new student to a new section!");

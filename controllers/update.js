@@ -41,6 +41,10 @@ router.put("/instructor_name", bodyParser, (request, response) => {
     });
 });
 
+
+
+
+
 //update student name
 //the body requires: first_name, last_name, and student_id
 router.put("/student_name", bodyParser, (request, response) => {
@@ -54,6 +58,12 @@ router.put("/student_name", bodyParser, (request, response) => {
       response.send(results);
     });
 });
+
+
+
+
+
+
 
 //update student status and credits_allowed
 //the body requires: status and credits_allowed
@@ -104,5 +114,47 @@ router.put("/title", bodyParser, (request, response) => {
       response.send(results);
     });
 });
+
+
+
+//updates course title. the body requires: title and course_ID
+router.put("/title", bodyParser, (request, response) => {
+  console.log(request.body);
+  connection.query(`UPDATE courses
+                    SET title = "${request.body.title}"
+                    WHERE course_ID = ${request.body.course_ID};`,
+    (error, results, fields) => {
+      console.log("updated course credits");
+      response.send(results);
+    });
+});
+
+
+
+//updates course title. the body requires: title and course_ID
+router.get("/update_section_instructor", bodyParser, (request, response) => {
+
+  //|   10000003 |     50002 | 01          | 2019 | SP       | 0220     |         3 |          1111 |       30 |
+  //ORIGINAL row for secitons ^^^^^^
+
+  connection.query(`UPDATE sections SET instructor_ID = 1111 WHERE sections.section_ID = 10000003;`, 
+      (error, results, fields) => {
+        console.log("updated course credits");
+        response.send(results);
+      }
+  );
+
+});
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
