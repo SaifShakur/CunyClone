@@ -49,7 +49,10 @@ router.put("/instructor_name", bodyParser, (request, response) => {
     });
 });
 
-//--------------- Update student's name --------------------
+
+
+
+
 //update student name
 //the body requires: first_name, last_name, and student_id
 // {
@@ -71,14 +74,16 @@ router.put("/student_name", bodyParser, (request, response) => {
     });
 });
 
-//--------------- Update student's credits --------------------
-//update credits_allowed
-//the body requires: credits_allowed
-// {
-// 	"credits_allowed": 9,
-// 	"student_id": 20202010
-// }
-router.put("/student_credit", bodyParser, (request, response) => {
+
+
+
+
+
+
+//update student status and credits_allowed
+//the body requires: status and credits_allowed
+router.put("/student_status", bodyParser, (request, response) => {
+  console.log(request.body);
   connection.query(`UPDATE students 
                     SET credits_allowed = "${request.body.credits_allowed}"
                     WHERE student_id = ${request.body.student_id};`,
@@ -167,5 +172,48 @@ router.put("/section", bodyParser, (request, response) => {
       response.send(results);
     });
 });
+
+
+
+//updates course title. the body requires: title and course_ID
+router.put("/title", bodyParser, (request, response) => {
+  console.log(request.body);
+  connection.query(`UPDATE courses
+                    SET title = "${request.body.title}"
+                    WHERE course_ID = ${request.body.course_ID};`,
+    (error, results, fields) => {
+      console.log("updated course credits");
+      response.send(results);
+    });
+});
+
+
+
+//updates course title. the body requires: title and course_ID
+/*
+${request.body.instructor_ID}
+${request.body.section_ID}
+
+*/
+router.put("/update_section_instructor", (request, response) => {
+
+  connection.query(`UPDATE sections SET instructor_ID = ${request.body.instructor_ID} 
+    WHERE sections.section_ID = ${request.body.section_ID};`, (error, results, fields) => {
+        console.log("updated course credits");
+        response.send(results);
+      }
+  );
+});
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;

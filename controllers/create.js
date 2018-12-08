@@ -19,7 +19,20 @@ connection.connect(function (error) {
   console.log('connected as id ' + connection.threadId);
 });
 
-//-------------------------------------------------------------
+
+
+/*
+
+1)    search through the sections table for that section
+1.a)  if the capacity for tha tsections is >= 1, return okay
+1.b)  else, reponse.send(400) 
+2)    insert the student.id into the enrollment table and then UPDATE that section capacity by 1
+
+
+  //request.body.student_id
+  //request.body.section_id
+
+*/
 
 
 router.get("/", (request, response) =>{
@@ -107,13 +120,13 @@ router.post("/section", bodyParser, (request, response) => {
   //INSERT INTO sections
   //course_ID, room_num, time_slot, instructor_ID must exist
   //{
-  // 	"course_ID": 50024, 
-  // 	"section_num": "03", 
-  // 	"year": 2020,
-  // 	"semester": "FA",
-  // 	"room_num": "0200",
-  // 	"time_slot": 4, 
-  // 	"instructor_ID": 1122
+  //  "course_ID": 50024, 
+  //  "section_num": "03", 
+  //  "year": 2020,
+  //  "semester": "FA",
+  //  "room_num": "0200",
+  //  "time_slot": 4, 
+  //  "instructor_ID": 1122
   // } 
   connection.query(`INSERT INTO sections 
                     VALUES(null, 
@@ -156,5 +169,93 @@ router.post("/student", bodyParser, (request, response) => {
       response.json(results);
     });
 });
+
+
+/*
+
+1)    search through the sections table for that section
+1.a)  if the capacity for tha tsections is >= 1, return okay
+1.b)  else, reponse.send(400) 
+2)    insert the student.id into the enrollment table and then UPDATE that section capacity by 1
+
+
+  //request.body.student_ID
+  //request.body.section_ID
+
+*/
+
+//--------------[Adding a student in enrollment creation]-----------------
+router.post("/add_enrollment", (request, response) => {
+
+  var sending_back = true;
+  
+  connection.query(`SELECT capacity FROM sections WHERE section_ID = ${request.body.section_ID}`, 
+    function (error, results, fields){
+
+      var cap = results[0].capacity;
+
+      if(cap < 1){
+        console.log("THERE'S NO ROOM FOR THIS SECTION");
+        sending_back = false;
+      }
+      else{
+
+        console.log("WE HERE");
+        console.log(`${request.body.student_ID}` + " and we have " + `${request.body.section_ID}`);
+
+        connection.query(`INSERT INTO enrollment VALUES(${request.body.student_ID}, ${request.body.section_ID});`);
+
+        //subtracting one from the capacity
+        connection.query(`UPDATE sections SET capacity = capacity - 1 WHERE section_ID = ${request.body.section_ID};`);
+
+        console.log(`SELECT capacity FROM sections WHERE section_ID = ${request.body.section_ID}`);
+      }
+
+  });
+
+  connection.query("SELECT * FROM enrollment;", function (error, results, fields){
+    console.log("We added a new student to a new section!");
+
+    var send_back = results;
+
+    if(sending_back === false)
+      send_back = 400;
+
+    response.send(send_back);
+  });
+
+});
+
+
+//-------------------------------------------------------------------------
+
+
+
+//TEST DATA SET UP
+
+
+// connection.query("INSERT INTO departments VALUES (\"Business\", \"1006\", \"BUSI\");");
+// INSERT INTO departments VALUES ("Business", "1006", "BUSI");
+
+// connection.query("INSERT INTO courses VALUES(NULL, 101, \"HOW TO DO CAPITALISM\", \"BUSI\", 3);");
+// INSERT INTO courses VALUES(NULL, 101, "HOW TO DO CAPITALISM", "BUSI", 1);
+
+// connection.query("INSERT INTO instructors VALUES(NULL, \"Bobby\", \"Moneyman\", \"BUSI\");");
+// s
+
+// //sections values
+// //NULL, course_id, fine, fine, fine, fine, fine, STAFF, fine
+
+// connection.query("INSERT INTO sections VALUES(NULL, 50031, \"01\", 2019, \"SP\", \"0620\", \
+//     7, 9999, 1);");
+// INSERT INTO sections VALUES(NULL, 50021, "01", 2019, "SP", "0620", 7, 1, 1);
+
+
+
+// connection.query(`INSERT INTO enrollment VALUES(20202010,10000023);`);
+// connection.query(`INSERT INTO enrollment VALUES(20202011,10000023);`);
+
+// connection.query("INSERT INTO students VALUES(NULL, \"Raman\", \"Kannan\", 18, 0, NULL);");
+
 
 module.exports = router;
