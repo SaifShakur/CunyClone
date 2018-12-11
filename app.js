@@ -1,10 +1,11 @@
 var mysql = require("mysql");
 var express = require("express");
 var app = express();
-var cors = require("cors")
 var PORT = process.env.PORT || 3001;
 var bodyParser = require("body-parser");
+var cors = require("cors")
 
+app.use(cors()); 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 //routers
@@ -13,7 +14,7 @@ const readRouter = require("./controllers/read");
 const updateRouter = require("./controllers/update");
 const deleteRouter = require("./controllers/delete");
 
-app.use(cors());
+
 app.use('/create', createRouter);
 app.use('/read', readRouter);
 app.use('/update', updateRouter);

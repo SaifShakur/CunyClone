@@ -48,6 +48,7 @@ router.get("/", (request, response) => {
 //------------[Department Deletions]---------------
 router.post("/delete_department", (request, response) =>{
 
+
   connection.query(`DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
     (SELECT * FROM courses WHERE dept = "${request.body.abbreviation}") del_courses 
     WHERE sections.course_ID = del_courses.course_ID) del_sections \
@@ -58,12 +59,8 @@ router.post("/delete_department", (request, response) =>{
     console.log(results);
   });
 
-<<<<<<< HEAD
-  connection.query(`DELETE sections.* FROM sections, (SELECT * FROM courses WHERE dept = ${request.body.abbreviation})\
-=======
 
   connection.query(`DELETE sections.* FROM sections, (SELECT * FROM courses WHERE dept = "${request.body.abbreviation}")\
->>>>>>> origin/saifHardcode
    del_courses WHERE sections.course_ID = del_courses.course_ID;`, function (error, results){
 
     console.log(" DELETEING sections QUERY: ")
@@ -99,8 +96,14 @@ router.post("/delete_department", (request, response) =>{
   
 });
 
+
+
+
+
+
+
 //------------[Courses Deletions]---------------
-router.get("/delete_course", (request, response) => {
+router.post("/delete_course", (request, response) => {
 
 
     connection.query(`DELETE enrollment.* FROM enrollment, (SELECT sections.* FROM sections, \
@@ -137,22 +140,29 @@ router.get("/delete_course", (request, response) => {
 
 });
 
+
+
+
+
+
+
 //----------------[Instructor Deleton]-----------------
-router.get("/delete_instructor", (request, response) =>{
+router.post("/delete_instructor", (request, response) =>{
 
-  connection.query(`DELETE FROM instructors WHERE instructor_ID = ${request.body.instructor_ID};`);
-
-  connection.query("SELECT * FROM instructors;", function (error, results, fields){
+  connection.query(`DELETE FROM instructors WHERE instructor_ID = ${request.body.instructor_ID};`, function (error, results, fields){
 
     console.log("We just deleted an instructor");
 
     response.send(results);
   });
-  
 });
 
+
+
+
+
 //----------------[Section Deleton]-----------------
-router.get("/delete_section", (request, response) =>{
+router.post("/delete_section", (request, response) =>{
 
   connection.query(`DELETE enrollment.* FROM enrollment, \
     (SELECT * FROM sections WHERE section_ID = ${request.body.section_ID}) \
@@ -180,8 +190,6 @@ router.get("/delete_section", (request, response) =>{
 
 });
 
-<<<<<<< HEAD
-=======
 
 
 
@@ -191,9 +199,8 @@ router.get("/delete_section", (request, response) =>{
 2)Remove the enrollment from the enrollment table
 3)Remove the student
 */
->>>>>>> origin/saifHardcode
 //----------------[Student Deleton]-----------------
-router.get("/delete_student", (request, response) =>{
+router.post("/delete_student", (request, response) =>{
 
 
   connection.query(`UPDATE sections, (SELECT enrollment.section_id FROM enrollment, \
@@ -205,7 +212,6 @@ router.get("/delete_student", (request, response) =>{
     console.log("DELETEING enrollements QUERY: ")
     console.log("\n");
     console.log(results);
-    response.send(results);
   });
 
 
@@ -232,8 +238,6 @@ router.get("/delete_student", (request, response) =>{
   
 });
 
-<<<<<<< HEAD
-=======
 
 
 
@@ -245,7 +249,7 @@ router.get("/delete_student", (request, response) =>{
 ${request.body.student_ID}
 ${request.body.section_ID}
 */
-router.get("/delete_enrollment", (request, response) => {
+router.post("/delete_enrollment", (request, response) => {
 
     //updating the section capacity
     connection.query(`UPDATE sections, 
@@ -284,5 +288,4 @@ router.get("/delete_enrollment", (request, response) => {
 
 
 
->>>>>>> origin/saifHardcode
 module.exports = router;
