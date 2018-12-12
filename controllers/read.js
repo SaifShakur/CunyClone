@@ -119,7 +119,7 @@ router.get("/students", (request, response) =>{
 });
 
 
-router.get("/enrollment", (request, response) =>{
+router.get("/enrollments", (request, response) =>{
 
   connection.query("SELECT * FROM enrollment;", function (error, results, fields){
 
@@ -144,7 +144,7 @@ ${request.body.end_time}
 
 */
 router.post("/sections_within_time", (request, response) => {
-
+  console.log(request.body);
   connection.query(`SELECT sections_subset.*, courses.title FROM courses,
   (SELECT sections.*, time_slots_subset.time_start, time_slots_subset.time_end FROM sections,
   (SELECT * FROM time_slots WHERE time_start >= '${request.body.start_time}' AND time_end <= '${request.body.end_time}') 
@@ -171,6 +171,7 @@ ${request.body.dept_abbreviation}
 
 
 router.post("/sections_within_department", (request, response) => {
+  console.log(request.body);
 
   connection.query(` 
 
